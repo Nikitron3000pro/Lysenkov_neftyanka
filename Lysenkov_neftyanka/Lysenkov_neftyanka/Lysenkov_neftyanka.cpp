@@ -2,36 +2,29 @@
 #include <fstream>
 #include <string>
 #include <list>
-
 using namespace std;
-
 // Структура, описывающая трубу
 struct Pipe {
     string name;
     double length;
     double diameter;
     bool inRepair;
-
     // Конструктор для инициализации трубы
     Pipe(const string& _name, double _length, double _diameter, bool _inRepair)
         : name(_name), length(_length), diameter(_diameter), inRepair(_inRepair) {}
 };
-
 // Структура, описывающая компрессорную станцию
 struct CompressorStation {
     string name;
     int numWorkshops;
     int numWorkshopsInOperation;
     double efficiency;
-
     // Конструктор для инициализации компрессорной станции
     CompressorStation(const string& _name, int _numWorkshops, int _numWorkshopsInOperation, double _efficiency)
         : name(_name), numWorkshops(_numWorkshops), numWorkshopsInOperation(_numWorkshopsInOperation), efficiency(_efficiency) {}
 };
-
 // Список для хранения труб
 list<Pipe> pipes;
-
 // Список для хранения компрессорной станции
 list<CompressorStation> stations;
 
@@ -49,6 +42,7 @@ void AddPipe() {
     cin >> diameter;
     cout << "Труба находится в ремонте? (1 - да, 0 - нет): ";
     cin >> inRepair;
+    
 
     Pipe pipe(name, length, diameter, inRepair);
     pipes.push_back(pipe);
@@ -109,25 +103,19 @@ void EditPipe() {
     it->inRepair = !it->inRepair;
     cout << "Статус ремонта для трубы  успешно изменен." << endl;
  }
-
 // Функция для запуска и остановки цеха в компрессорной станции
 void toggleWorkshopStatus() {
     if (stations.empty()) {
         cout << "Список компрессорных станций пуст. Нельзя выполнить это действие." << endl;
         return;
     }
-
-
     auto it = stations.begin();
-
     int newNumWorkshopsInOperation;
     cout << "Введите новое количество цехов в работе: ";
     cin >> newNumWorkshopsInOperation;
-
     it->numWorkshopsInOperation = newNumWorkshopsInOperation;
     cout << "Статус цеха в компрессорной станции изменен." << endl;
 }
-
 // Функция для сохранения данных в файл
 void SaveToFile() {
     ofstream file("pipes.txt");
@@ -147,9 +135,7 @@ void SaveToFile() {
 }
 void LoadFromFile() {
     pipes.clear(); // Очищаем текущий список труб
-    stations.clear();
-    ifstream inputFile("pipes.txt"); // Замените "data.txt" на имя вашего файла
-
+    ifstream inputFile("pipes.txt"); 
     if (!inputFile.is_open()) {
         cerr << "Ошибка при открытии файла." << endl;
     }
@@ -167,6 +153,17 @@ void LoadFromFile() {
     }
     else {
         cout << "Ошибка при открытии файла для загрузки данных." << endl;
+    }
+    if (inputFile.is_open()) {
+        string name;
+        int numWorkshops, numWorkshopsInOperation;
+        double efficiency;
+        while (inputFile >> name >> numWorkshops >> numWorkshopsInOperation >> efficiency) {
+            CompressorStation CompressorStation(name, numWorkshops, numWorkshopsInOperation, efficiency);
+            stations.push_back(CompressorStation);
+        }
+        inputFile.close();
+        cout << "Данные успешно загружены из файла pipes.txt." << endl;
     }
     if (pipes.empty()) {
         cout << "Список труб пуст." << endl;
@@ -194,51 +191,10 @@ void LoadFromFile() {
             cout << "------------------------" << endl;
         }
     }
-
-}// Закрыть файл
-/* Функция для загрузки данных из файла
-void LoadFromFile() {
-    pipes.clear(); // Очищаем текущий список труб
-    stations.clear();// Очищаем текущий список компрессорных станций
-
-    ifstream file("pipes.txt");
-    if (file.is_open()) {
-        string name;
-        double length, diameter;
-        bool inRepair;
-
-        while (file >> name >> length >> diameter >> inRepair) {
-            Pipe pipe(name, length, diameter, inRepair);
-            pipes.push_back(pipe);
-    }
-        file.close();
-        cout << "Данные успешно загружены из файла pipes.txt." << endl;
-    }
-    else {
-        cout << "Ошибка при открытии файла для загрузки данных." << endl;
-    }
-    if (file.is_open()) {
-        string name;
-        int numWorkshops, numWorkshopsInOperation;
-        double efficiency;
-
-        while (file >> name >> numWorkshops >> numWorkshopsInOperation >> efficiency) {
-            CompressorStation CompressorStation(name, numWorkshops, numWorkshopsInOperation, efficiency);
-            stations.push_back(CompressorStation);
-        }
-
-        file.close();
-        cout << "Данные успешно загружены из файла pipes.txt." << endl;
-    }
-    else {
-        cout << "Ошибка при открытии файла для загрузки данных." << endl;
-    }
 }
-*/
 int main() {
     int choice;
     setlocale(LC_ALL, "rus");
-
     while (true) {
         cout << "------------------------------" << endl;
         cout << "Меню:" << endl;
@@ -253,7 +209,6 @@ int main() {
         cout << "8. Выход" << endl;
         cout << "Выберите действие: ";
         cin >> choice;
-
         switch (choice) {
         case 1:
             AddPipe();
@@ -283,6 +238,5 @@ int main() {
             cout << "Некорректный выбор. Попробуйте снова." << endl;
         }
     }
-
     return 0;
 }
