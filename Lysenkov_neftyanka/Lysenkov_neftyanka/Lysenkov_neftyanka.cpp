@@ -70,7 +70,7 @@ void AddCompressorStation() {
     cout << "Компрессорная станция успешно добавлена!" << endl;
 }
 // Функция для просмотра всех объектов
-void ViewPipes() {
+void View() {
     if (pipes.empty()) {
         cout << "Список труб пуст." << endl;
     }
@@ -220,7 +220,7 @@ int main() {
             AddCompressorStation();
             break;
         case 3:
-            ViewPipes();
+            View();
             break;
         case 4:
             EditPipe();
