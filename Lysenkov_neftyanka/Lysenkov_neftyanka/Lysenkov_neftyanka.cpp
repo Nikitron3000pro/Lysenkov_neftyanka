@@ -117,23 +117,7 @@ void toggleWorkshopStatus() {
     it->numWorkshopsInOperation = newNumWorkshopsInOperation;
     cout << "Статус цеха в компрессорной станции изменен." << endl;
 }
-// Функция для сохранения данных в файл
-void SaveToFile() {
-    ofstream file("pipes.txt");
-    if (file.is_open()) {
-        for (const Pipe& pipe : pipes) {
-            file << pipe.name << " " << pipe.length << " " << pipe.diameter << " " << pipe.inRepair << endl;
-        }
-        for (const CompressorStation& CompressorStation : stations) {
-            file << CompressorStation.name << " " << CompressorStation.numWorkshops << " " << CompressorStation.numWorkshopsInOperation << " " << CompressorStation.efficiency << endl;
-        }
-        file.close();
-        cout << "Данные успешно сохранены в файл pipes.txt." << endl;
-    }
-    else {
-        cout << "Ошибка при открытии файла для сохранения данных." << endl;
-    }
-}
+
 //Функция для загрузки сохраненных данных из файла в консоль
 void LoadFromFile() {
     pipes.clear(); // Очищаем текущий список труб
