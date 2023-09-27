@@ -2,7 +2,9 @@
 #include <fstream>
 #include <string>
 #include <list>
+
 using namespace std;
+
 // Структура, описывающая трубу
 struct Pipe {
     string name;
@@ -96,7 +98,6 @@ void ViewPipes() {
         }
     }
 }
-
 // Функция для редактирования признака "в ремонте" для трубы
 void EditPipe() {
     auto it = pipes.begin();
@@ -133,6 +134,7 @@ void SaveToFile() {
         cout << "Ошибка при открытии файла для сохранения данных." << endl;
     }
 }
+//Функция для загрузки сохраненных данных из файла в консоль
 void LoadFromFile() {
     pipes.clear(); // Очищаем текущий список труб
     ifstream inputFile("pipes.txt"); 
@@ -192,6 +194,7 @@ void LoadFromFile() {
         }
     }
 }
+//Функция описания и работоспособности меню
 int main() {
     int choice;
     setlocale(LC_ALL, "rus");
