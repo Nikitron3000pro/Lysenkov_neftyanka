@@ -1,277 +1,327 @@
-﻿#include <iostream>
+﻿// используемые библиотеки
+#include <iostream>
 #include <fstream>
 #include <string>
+// использование std
 using namespace std;
-struct Pipe
+// различные проверки на устойчивость программы
+// проверка, если введено отрицательное число, то ошибка
+int proverka_otric(int& chislo) 
 {
-	string pipe_name = "None";
-	double pipe_length = 0.0;
-	int pipe_diameter = 0;
-	bool pipe_repair = false;
-};
-struct Station
-{
-	string station_name = "None";
-	int station_workshops = 0;
-	int station_workshopsInOperation = 0;
-	double station_efficiency = 0.0;
-};
-int check_int(int& int_data)
-{
-	cin >> int_data;
-	while (cin.fail() || cin.peek() != '\n' || int_data <= 0)
+	cin >> chislo;
+	while (cin.fail() || cin.peek() != '\n' || chislo <= 0) //cin.fail()возвращает true, если последняя команда cin завершилась неудачно, и false в противном случае; cin.peek() != '\n') проверяет формат ввода по одному числу на строку
 	{
-		cin.clear();
-		cin.ignore(100000, '\n');
-		cout << "\nВведено неверное значение, введите цифру от 0 до 7:\n";
-		cin >> int_data;
+		cin.clear(); // очищаем cin, приводим его в рабочее состояние
+		cin.ignore(100, '\n'); // игнорирует 100 введенных символов, пока не встретит переход на новую строку
+		cout << "\nВведено неверное значение, попробуйте еще раз:\n";
+		cin >> chislo;
 	}
-	return int_data;
+	return chislo;
 }
-
-int check_input(int& input_data)
+// если число меньше 0 или больше 7, то ошибка
+int proverka_vvod(int& chislo) 
 {
-	cin >> input_data;
-	while (cin.fail() || cin.peek() != '\n' || input_data < 0 || input_data > 7)
+	cin >> chislo;
+	while (cin.fail() || cin.peek() != '\n' || chislo < 0 || chislo > 7)
 	{
-		cin.clear();
-		cin.ignore(10000, '\n');
+		cin.clear(); // очищаем cin, приводим его в рабочее состояние
+		cin.ignore(100, '\n'); // игнорирует 100 введенных символов, пока не встретит переход на новую строку
 		cout << "\nВведено неверное значение, введите цифру от 0 до 7:\n";
-		cin >> input_data;
+		cin >> chislo;
 	}
-	return input_data;
+	return chislo;
 }
-
-double check_double(double& double_data)
+// если введено значение вещественного тип с плавающей точкой двойной точности, то вывод ошибки
+double proverka_double(double& chislo) 
 {
-	cin >> double_data;
-	while (cin.fail() || cin.peek() != '\n' || double_data <= 0)
+	cin >> chislo;
+	while (cin.fail() || cin.peek() != '\n' || chislo <= 0)
 	{
-		cin.clear();
-		cin.ignore(100000, '\n');
-		cout << "\nВведено неверное значение, введите цифру от 0 до 7:\n";
-		cin >> double_data;
+		cin.clear(); // очищаем cin, приводим его в рабочее состояние
+		cin.ignore(100, '\n'); // игнорирует 100 введенных символов, пока не встретит переход на новую строку
+		cout << "\nВведено неверное значение, попробуйте еще раз\n";
+		cin >> chislo;
 	}
-	return double_data;
+	return chislo;
 }
-double check2_double(double& efficiency_data)
+// если введено значение эффективности меньше 0.0 или больше 1.0, то вывод ошибки
+double chek_double(double& chislo) 
 {
-	cin >> efficiency_data;
-	while (cin.fail() || cin.peek() != '\n' || (efficiency_data < 0.0) || (efficiency_data > 1.0))
+	cin >> chislo;
+	while (cin.fail() || cin.peek() != '\n' || (chislo < 0.0) || (chislo > 1.0))
 	{
-		cin.clear();
-		cin.ignore(100000, '\n');
+		cin.clear(); // очищаем cin, приводим его в рабочее состояние
+		cin.ignore(100, '\n'); // игнорирует 100 введенных символов, пока не встретит переход на новую строку
 		cout << "\nВведите эффективность от 0.0 до 1.0 \n";
-		cin >> efficiency_data;
+		cin >> chislo;
 	}
-	return efficiency_data;
+	return chislo;
 }
-bool check_bool(bool& bool_data)
+// проверка на булевой тип данных
+bool chek_bool(bool& chislo) 
 {
-	cin >> bool_data;
+	cin >> chislo;
 	while (cin.fail() || cin.peek() != '\n')
 	{
-		cin.clear();
-		cin.ignore(100000, '\n');
-		cout << "\nВведено неверное значение, введите цифру от 0 до 7:\n";
-		cin >> bool_data;
+		cin.clear(); // очищаем cin, приводим его в рабочее состояние
+		cin.ignore(100, '\n'); // игнорирует 100 введенных символов, пока не встретит переход на новую строку
+		cout << "\nВведено неверное значение, попробуйте еще раз:\n";
+		cin >> chislo;
 	}
-	return bool_data;
+	return chislo;
 }
+// структура для описания трубы, вводим переменные и первоначально обнуляем данные
+struct Pipe
+{
+	string name = "None";
+	double length = 0.0;
+	int diameter = 0;
+	bool repair = false;
+};
+// структура для описания компрессорной станции, вводим переменные и первоначально обнуляем данные
+struct Station
+{
+	string Name = "None";
+	int workshops = 0;
+	int workshopsInOperation = 0;
+	double efficiency = 0.0;
+};
+// функция для считывания данных трубы с консоли
 Pipe AddPipe()
 {
-	Pipe new_pipe;
-	cout << endl << "Добавление новой трубы..." << endl;
+	Pipe pipe;
 	cout << "Введите название трубы: ";
-	cin.ignore();
-	getline(cin, new_pipe.pipe_name);
+	cin.ignore(); // очищает кеш перед следующей строкой
+	getline(cin, pipe.name); // извлечение одной строки и записывание ее в переменную
+	cin.ignore(100, '\n');
 	cout << "Введите длину трубы (в км): ";
-	check_double(new_pipe.pipe_length);
+	proverka_double(pipe.length);
+	cin.ignore(100, '\n');
 	cout << "Введите диаметр трубы (в м): ";
-	check_int(new_pipe.pipe_diameter);
-	cout << "Введите статус трубы: ";
-	check_bool(new_pipe.pipe_repair);
-	return new_pipe;
+	proverka_otric(pipe.diameter);
+	cin.ignore(100, '\n');
+	cout << "Труба в ремонте? (1 - да, 0 - нет): ";
+	chek_bool(pipe.repair);
+	cin.ignore(100, '\n');
+	return pipe;
 }
-
-
-void PrintAddPipe(Pipe& new_pipe)
+// функция для просмотра введенных данных трубы на консоль
+void PrintAddPipe(Pipe& pipe) // передаем в аргумент функции значения с помощью ссылок
 {
-	cout << endl << "Информация о трубе..." << endl;
-	if (new_pipe.pipe_name == "None")
+	cout << endl << "Данные о трубе" << endl;
+	if (pipe.name == "None")
 	{
 		cout << "Труб нет в наличии!\n";
 	}
 	else
 	{
-		cout << "Название трубы: " << new_pipe.pipe_name << "\tДлина трубы: " << new_pipe.pipe_length
-			<< "\tДиаметр трубы: " << new_pipe.pipe_diameter << "\tВ ремонте: " << new_pipe.pipe_repair << endl;
+		cout << "Название трубы: " << pipe.name << "\tДлина трубы: " << pipe.length << "\t\tДиаметр трубы: " << pipe.diameter << "\tВ ремонте: " << (pipe.repair ? "Да" : "Нет") << endl;
 	}
 }
-void RepairPipe(Pipe& new_pipe)
+// функция для редактирования статуса ремонта трубы
+void RepairPipe(Pipe& pipe) // передаем в аргумент функции значения с помощью ссылок
 {
-	if (new_pipe.pipe_name == "None")
+	if (pipe.name == "None")
 	{
 		cout << "Труб нет в наличии!\n";
 	}
 	else
 	{
-		new_pipe.pipe_repair = !new_pipe.pipe_repair;
+		pipe.repair = !pipe.repair;
 		cout << endl << "Статус трубы успешно изменен!";
-		PrintAddPipe(new_pipe);
+		PrintAddPipe(pipe);
 	}
 }
+// функция для просмотра введенных данных компрессорной станции на консоль
 Station AddStation()
 {
-	Station new_station;
-	cout << endl << "Добавление новой компрессорной станции..." << endl;
+	Station station;
 	cout << "Введите название компрессорной станции: ";
-	cin.ignore();
-	getline(cin, new_station.station_name);
+	cin.ignore(); // очищает кеш перед следующей строкой
+	getline(cin, station.Name); // извлечение одной строки и записывание ее в переменную
+	cin.ignore(100, '\n');
 	cout << "Введите количество цехов: ";
-	check_int(new_station.station_workshops);
+	proverka_otric(station.workshops);
+	cin.ignore(100, '\n');
 	cout << "Введите количество цехов в работе: ";
-	check_int(new_station.station_workshopsInOperation);
-	while (new_station.station_workshopsInOperation > new_station.station_workshops)
+	proverka_otric(station.workshopsInOperation);
+	//cin.ignore(100, '\n');
+	while (station.workshopsInOperation > station.workshops) // проверка, чтобы число цехов в работе не превышало общее число цехов
 	{
 		cout << "Число рабочих цехов не может превышать общее число цехов!\n";
 		cout << "Ведите количество цехов в работе: ";
-		check_int(new_station.station_workshopsInOperation);
+		proverka_otric(station.workshopsInOperation);
 	}
-	cout << "Введите эффективность (некий показатель от 0 до 1): ";
-	check2_double(new_station.station_efficiency);
-	return new_station;
+	//cout<< ;
+	cout << "Эффективность вашей трубы (в процентах): "<<(int)((double)station.workshopsInOperation/ station.workshops*100);
+	proverka_double(station.efficiency);
+	return station;
 }
-
-void PrintAddStation(Station& new_station)
+// функция для просмотра введенных данных компрессорной станции на консоль
+void PrintAddStation(Station& station) // передаем в аргумент функции значения с помощью ссылок
 {
-	cout << endl << "Информаций о компрессорной станции..." << endl;
-	if (new_station.station_name == "None")
+	cout << endl << "Данные о компрессорной станции" << endl;
+	if (station.Name == "None")
 	{
 		cout << "Компрессорных станций нет в наличии!\n";
 	}
 	else
 	{
-		cout << "Название компрессорной станции: " << new_station.station_name << "\t:Количество цехов: " << new_station.station_workshops
-			<< "\tЦехов в работе: " << new_station.station_workshopsInOperation << "\tЭффективность: "
-			<< new_station.station_efficiency << endl;
+		cout << "Название компрессорной станции: " << station.Name << "\tКоличество цехов: " << station.workshops
+			<< "\tЦехов в работе: " << station.workshopsInOperation << "\tЭффективность: "
+			<< station.efficiency << endl;
 	}
 }
-void EditStation(Station& new_station)
+// функция для изменения количества цехов в работе
+void EditStation(Station& station) // передаем в аргумент функции значения с помощью ссылок
 {
-	if (new_station.station_name == "None")
+	if (station.Name == "None")
 	{
 		cout << "Компрессорных станций нет в наличии!\n";
 	}
 	else
 	{
 		cout << "Введите количество цехов в работе: ";
-		check_int(new_station.station_workshopsInOperation);
-		while (new_station.station_workshopsInOperation > new_station.station_workshops)
+		proverka_otric(station.workshopsInOperation);
+		while (station.workshopsInOperation > station.workshops)
 		{
 			cout << "Число рабочих цехов не может превышать общее число цехов!\n";
 			cout << "Введите количество цехов в работе: ";
-			check_int(new_station.station_workshopsInOperation);
+			proverka_otric(station.workshopsInOperation);
 		}
 	}
-	PrintAddStation(new_station);
+	PrintAddStation(station);
 }
-
-void FileRecord(Pipe& pipe_data, Station& station_data)
+// функция для сохранения данных о трубе и о компрессорной станции в файл
+void SaveToFile(Pipe& pipe, Station& station) // передаем в аргумент функции значения с помощью ссылок
 {
-	ofstream fout("info");
-	if (pipe_data.pipe_name == "None")
+	ofstream fout("neftyanka.txt"); // создаём объект класса ofstream и связываем его с файлом neftyanka.txt
+	// сохранение данных о трубе
+	setlocale(LC_ALL, "rus");
+	if (pipe.name == "None")
 	{
-		cout << "Нет информации о трубе!\n";
+		setlocale(LC_ALL, "rus");
+		cout << "Нет данных о трубе!\n";
 	}
 	else
 	{
+		setlocale(LC_ALL, "rus");
 		cout << "Данные о трубе успешно загружены в файл!\n";
 		if (fout)
 		{
-			fout << "Информация о трубе...\n";
-			fout << pipe_data.pipe_name << endl;
-			fout << pipe_data.pipe_length << endl;
-			fout << pipe_data.pipe_diameter << endl;
-			fout << pipe_data.pipe_repair << endl;
+			setlocale(LC_ALL, "rus");
+			fout << "Данные о трубе\n";
+			fout << pipe.name << endl;
+			fout << pipe.length << endl;
+			fout << pipe.diameter << endl;
+			fout << pipe.repair << endl;
 		}
 	}
-	if (station_data.station_name == "None")
+	// сохранение данных о компрессорной станции
+	if (station.Name == "None")
 	{
-		cout << "Нет информации о компрессорной станции!\n";
+		setlocale(LC_ALL, "rus");
+		cout << "Нет данных о компрессорной станции!\n";
 	}
 	else
 	{
+		setlocale(LC_ALL, "rus");
 		cout << "Данные о компрессорной станции успешно загружены в файл!\n";
 		if (fout)
 		{
-			fout << "Информация о компрессорной станции...\n";
-			fout << station_data.station_name << endl;
-			fout << station_data.station_workshops << endl;
-			fout << station_data.station_workshopsInOperation << endl;
-			fout << station_data.station_efficiency << endl;
+			setlocale(LC_ALL, "rus");
+			fout << "Данные о компрессорной станции\n";
+			fout << station.Name << endl;
+			fout << station.workshops << endl;
+			fout << station.workshopsInOperation << endl;
+			fout << station.efficiency << endl;
 		}
 	}
 	fout.close();
 }
-void FileOutput(Pipe& pipe_data, Station& station_data)
+// функция для загрузки данных о трубе и о компрессорной станции из файла
+void LoadFromFile(Pipe& pipe, Station& station) // передаем в аргумент функции значения с помощью ссылок
 {
-	ifstream fin("info");
+	ifstream fin("neftyanka.txt"); // создаем объекта класса ifstream и связываем его с файлом neftyanka.txt
+	setlocale(LC_ALL, "rus");
 	if (fin)
 	{
-		string zero_mean;
-		int pipe_flag = 0;
-		int station_flag = 0;
-		while (getline(fin, zero_mean))
+		string information;
+		int statys = 0;
+		int perfomance = 0;
+		while (getline(fin, information))
 		{
-			if (zero_mean == "Информация о трубе...")
+			// выводим данные о трубе 
+			setlocale(LC_ALL, "rus");
+			if (information == "Данные о трубе")
 			{
-				cout << "\nИнформация о трубе успешно загружена из файла!" << endl;
-				cout << "\nИнформация о трубе..." << endl;
-				getline(fin, pipe_data.pipe_name);
-				cout << "Название трубы: " << pipe_data.pipe_name << endl;
-				fin >> pipe_data.pipe_length;
-				cout << "Длина трубы: " << pipe_data.pipe_length << endl;
-				fin >> pipe_data.pipe_diameter;
-				cout << "Диаметр трубы: " << pipe_data.pipe_diameter << endl;
-				fin >> pipe_data.pipe_repair;
-				cout << "Статус трубы: " << pipe_data.pipe_repair << endl;
-				pipe_flag += 1;
+				setlocale(LC_ALL, "rus");
+				cout << "\nДанные о трубе успешно загружены из файла!" << endl;
+				setlocale(LC_ALL, "rus");
+				cout << "\nДанные о трубе" << endl;
+				setlocale(LC_ALL, "rus");
+				getline(fin, pipe.name);
+				setlocale(LC_ALL, "rus");
+				cout << "Название трубы: " << pipe.name << endl;
+				fin >> pipe.length;
+				setlocale(LC_ALL, "rus");
+				cout << "Длина трубы: " << pipe.length << endl;
+				fin >> pipe.diameter;
+				setlocale(LC_ALL, "rus");
+				cout << "Диаметр трубы: " << pipe.diameter << endl;
+				fin >> pipe.repair;
+				setlocale(LC_ALL, "rus");
+				cout << "В ремонте: " << pipe.repair << endl;
+				statys += 1;
 			}
-			if (zero_mean == "Информация о компрессорной станции...")
+			// выводим данные о компрессорной станции 
+			setlocale(LC_ALL, "rus");
+			if (information == "Данные о компрессорной станции")
 			{
-				cout << "\nИнформация о компрессорной станции успешно загружена из файла!" << endl;
-				cout << "\nИнформация о компрессорной станции..." << endl;
-				getline(fin, station_data.station_name);
-				cout << "Название компрессорной станции: " << station_data.station_name << endl;
-				fin >> station_data.station_workshops;
-				cout << "Число цехов:: " << station_data.station_workshops << endl;
-				fin >> station_data.station_workshopsInOperation;
-				cout << "Число цехов в работе: " << station_data.station_workshopsInOperation << endl;
-				fin >> station_data.station_efficiency;
-				cout << "Эффективность: " << station_data.station_efficiency << endl;
-				station_flag += 1;
+				setlocale(LC_ALL, "rus");
+				cout << "\nДанные о компрессорной станции успешно загружены из файла!" << endl;
+				setlocale(LC_ALL, "rus");
+				cout << "\nДанные о компрессорной станции" << endl;
+				setlocale(LC_ALL, "rus");
+				getline(fin, station.Name);
+				setlocale(LC_ALL, "rus");
+				cout << "Название компрессорной станции: " << station.Name << endl;
+				fin >> station.workshops;
+				setlocale(LC_ALL, "rus");
+				cout << "Количество цехов: " << station.workshops << endl;
+				fin >> station.workshopsInOperation;
+				setlocale(LC_ALL, "rus");
+				cout << "Цехов в работе: " << station.workshopsInOperation << endl;
+				fin >> station.efficiency;
+				setlocale(LC_ALL, "rus");
+				cout << "Эффективность: " << station.efficiency << endl;
+				perfomance += 1;
 			}
 		}
-		if (pipe_flag == 0)
+		if (statys == 0)
 		{
-			cout << "\nНет информации о трубе!" << endl;
+			setlocale(LC_ALL, "rus");
+			cout << "\nНет данных о трубе!" << endl;
 		}
-		if (station_flag == 0)
+		if (perfomance == 0)
 		{
-			cout << "\nНет информации о компрессорной станции!" << endl;
+			setlocale(LC_ALL, "rus");
+			cout << "\nНет данных о компрессорной станции!" << endl;
 		}
 		fin.close();
 	}
 }
+// функция создания меню и первоначальной картины программы
 int main()
 {
 	Pipe pipe0;
 	Station station0;
-	int num = 0;
+	int pynkt = 0;
 	while (true) {
 		setlocale(LC_ALL, "rus");
-		cout << endl << "Меню:" << endl;
+		cout << endl << "_____________________" << endl;
+		cout << endl << "\tМеню:" << endl;
+		cout << endl << "|____________________|" << endl;
 		cout << "1. Добавить трубу" << endl;
 		cout << "2. Добавить компрессорную станцию" << endl;
 		cout << "3. Просмотр всех объектов" << endl;
@@ -280,57 +330,57 @@ int main()
 		cout << "6. Сохранить данные в файл" << endl;
 		cout << "7. Загрузить данные из файла" << endl;
 		cout << "0. Выход" << endl;
-		cout << endl << "Please, enter the command number: ";
-		cin >> num;
-		if (cin.fail() || num < 0 || num > 7)
+		cout << endl << "Введите цифру от 0 до 7: ";
+		cin >> pynkt;
+		if (cin.fail() || pynkt < 0 || pynkt > 7)
 		{
 			cout << "Введено неверное значение, введите цифру от 0 до 7:" << endl;
 			cin.clear();
 			cin.ignore(1000, '\n');
 			continue;
 		}
-		check_input(num);
-		switch (num)
+		//check_input(num);
+		switch (pynkt)
 		{
-		case 1:
+		case 1: // добавление трубы
 		{
 			pipe0 = AddPipe();
 			PrintAddPipe(pipe0);
 			break;
 		}
-		case 2:
+		case 2: // добавление компрессорной станции
 		{
 			station0 = AddStation();
 			PrintAddStation(station0);
 			break;
 		}
-		case 3:
+		case 3: // просмотр объектов
 		{
 			PrintAddPipe(pipe0);
 			PrintAddStation(station0);
 			break;
 		}
-		case 4:
+		case 4: // редактирование трубы
 		{
 			RepairPipe(pipe0);
 			break;
 		}
-		case 5:
+		case 5: // редактирование компрессорной станции
 		{
 			EditStation(station0);
 			break;
 		}
-		case 6:
+		case 6: // сохранение данных о трубе и компрессорной станции в файл
 		{
-			FileRecord(pipe0, station0);
+			SaveToFile(pipe0, station0);
 			break;
 		}
-		case 7:
+		case 7: // загрузка данных о трубе и компрессорной станции из файла
 		{
-			FileOutput(pipe0, station0);
+			LoadFromFile(pipe0, station0);
 			break;
 		}
-		case 0:
+		case 0: // выход из программы
 		{
 			return false;
 			break;
